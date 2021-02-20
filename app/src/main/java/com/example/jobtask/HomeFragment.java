@@ -22,6 +22,9 @@ import com.example.jobtask.model.DrinkResponce;
 import com.example.jobtask.network.ApiClient;
 import com.example.jobtask.network.ApiService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -98,10 +101,9 @@ public class HomeFragment extends Fragment {
                     public void onResponse(Call<DrinkResponce> call, Response<DrinkResponce> response) {
                         if(response.isSuccessful()){
                         // add your code to get data
-                            Toast.makeText(myView.getContext(),""+response.code(),Toast.LENGTH_SHORT).show();
-                            Log.i("tag",response.toString());
                             String detailsJson = response.body().getAllDrinks().toString();
-                            Log.i("tag",response.body().getAllDrinks().toString());
+                            List<DrinkResponce> allDrinks = new ArrayList<>();
+                         //   DrinkResponce singleDrink = new DrinkResponce();
 
                         }
                         else if(!response.isSuccessful()){

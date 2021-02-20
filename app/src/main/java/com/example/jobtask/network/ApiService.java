@@ -10,5 +10,6 @@ public interface ApiService {
     @GET("api/json/v1/1/search.php")
     Call<DrinkResponce> getByName(@Query("s") String drinkName);
 
-
+    @GET("api/json/v1/1/search.php")
+    Call<DrinkResponce> getByAlphabet(@Query("f") String alphabet);
 }

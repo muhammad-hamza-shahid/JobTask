@@ -18,6 +18,13 @@ public class DrinkResponce {
     @SerializedName("strDrinkThumb")
     private String drinkImage;
 
+    public DrinkResponce(String drinkName, String drinkRecipe, String alcoholStatus, String drinkImage) {
+        this.drinkName = drinkName;
+        this.drinkRecipe = drinkRecipe;
+        this.alcoholStatus = alcoholStatus;
+        this.drinkImage = drinkImage;
+    }
+
     @SerializedName("drinks")
     public JsonArray allDrinks;
 
