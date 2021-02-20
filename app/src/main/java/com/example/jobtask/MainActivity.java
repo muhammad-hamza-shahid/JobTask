@@ -1,7 +1,12 @@
 package com.example.jobtask;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.app.ActionBar;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -10,11 +15,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jobtask.utilities.NotificationBroadcastReciever;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     AlarmManager alarmManager;
     PendingIntent pendingIntent;
 
+    private Toolbar toolbar;
+    TextView toolbarText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
 
         startAlarm();
+
+        toolbarText=findViewById(R.id.toolbar_text);
+
+        loadFragment(new HomeFragment());
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
 
 //        ComponentName receiver = new ComponentName(MainActivity.this, NotificationBroadcastReciever.class);
 //        PackageManager pm = MainActivity.this.getPackageManager();
@@ -53,23 +71,54 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
+//    public void onRadioButtonClicked(View view) {
+//        // Is the button now checked?
+//        boolean checked = ((RadioButton) view).isChecked();
+//
+//        // Check which radio button was clicked
+//        switch(view.getId()) {
+//            case R.id.rb_by_name:
+//                if (checked)
+//                    // Pirates are the best
+//                    Toast.makeText(MainActivity.this,"Name",Toast.LENGTH_SHORT).show();
+//                    break;
+//            case R.id.rb_by_alphabet:
+//                if (checked)
+//                    // Ninjas rule
+//                    Toast.makeText(MainActivity.this,"Alphabet",Toast.LENGTH_SHORT).show();
+//
+//                break;
+//        }
+//    }
 
-        // Check which radio button was clicked
-        switch(view.getId()) {
-            case R.id.rb_by_name:
-                if (checked)
-                    // Pirates are the best
-                    Toast.makeText(MainActivity.this,"Name",Toast.LENGTH_SHORT).show();
-                    break;
-            case R.id.rb_by_alphabet:
-                if (checked)
-                    // Ninjas rule
-                    Toast.makeText(MainActivity.this,"Alphabet",Toast.LENGTH_SHORT).show();
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-                break;
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment;
+            switch (item.getItemId()) {
+                case R.id.home_page:
+                    toolbarText.setText("Drinks Recipes");
+                    fragment = new HomeFragment();
+                    loadFragment(fragment);
+                    return true;
+                case R.id.favorite_page:
+                    toolbarText.setText("Favorite Recipes");
+                    fragment = new FavouriteFragment();
+                    loadFragment(fragment);
+                    return true;
+            }
+
+            return false;
         }
+    };
+
+    private void loadFragment(Fragment fragment) {
+        // load fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

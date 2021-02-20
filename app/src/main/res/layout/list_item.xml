@@ -60,7 +60,7 @@
         android:layout_width="54dp"
         android:layout_height="54dp"
         android:layout_marginEnd="8dp"
-        android:src="@drawable/star"
+        android:src="@drawable/grey_star"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
         app:layout_constraintTop_toTopOf="parent"
