@@ -4,14 +4,27 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
+
+import com.example.jobtask.model.DrinkResponce;
+import com.example.jobtask.network.ApiClient;
+import com.example.jobtask.network.ApiService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,9 +33,8 @@ import android.widget.Toast;
  */
 public class HomeFragment extends Fragment {
 
-
     View myView;
-
+    public static ApiService apiInterface;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,26 +47,6 @@ public class HomeFragment extends Fragment {
 
     public HomeFragment() {
         // Required empty public constructor
-    }
-
-        public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
-
-        // Check which radio button was clicked
-        switch(view.getId()) {
-            case R.id.rb_by_name:
-                if (checked)
-                    // Pirates are the best
-                    Toast.makeText(view.getContext(),"Name",Toast.LENGTH_SHORT).show();
-                    break;
-            case R.id.rb_by_alphabet:
-                if (checked)
-                    // Ninjas rule
-                    Toast.makeText(view.getContext(),"Alphabet",Toast.LENGTH_SHORT).show();
-
-                break;
-        }
     }
 
     /**
@@ -77,6 +69,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        apiInterface = ApiClient.getApiClient().create(ApiService.class);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -89,23 +82,65 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.fragment_home, container, false);
 
-
         RadioGroup radioGroup = (RadioGroup) myView.findViewById(R.id.radioGroup);
+        SearchView searchView = (SearchView) myView.findViewById(R.id.searchView);
+        RecyclerView recyclerView = (RecyclerView) myView.findViewById(R.id.recycler_view);
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(myView.getContext(),"query" +query,Toast.LENGTH_SHORT).show();
+
+                Call<DrinkResponce> call =apiInterface.getByName(query);
+
+                call.enqueue(new Callback<DrinkResponce>() {
+                    @Override
+                    public void onResponse(Call<DrinkResponce> call, Response<DrinkResponce> response) {
+                        if(response.isSuccessful()){
+                        // add your code to get data
+                            Toast.makeText(myView.getContext(),""+response.code(),Toast.LENGTH_SHORT).show();
+                            Log.i("tag",response.toString());
+                            String detailsJson = response.body().getAllDrinks().toString();
+                            Log.i("tag",response.body().getAllDrinks().toString());
+
+                        }
+                        else if(!response.isSuccessful()){
+                            //display error message
+                            Toast.makeText(myView.getContext(),""+response.code(),Toast.LENGTH_SHORT).show();
+                            Log.i("tag",response.toString());
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DrinkResponce> call, Throwable t) {
+                        Toast.makeText(myView.getContext(),""+t.getMessage(),Toast.LENGTH_SHORT).show();
+                        Log.i("tag",t.getMessage());
+                    }
+                });
+
+
+                return false;
+
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Toast.makeText(myView.getContext(),"query new text",Toast.LENGTH_SHORT).show();
+
+                return false;
+            }
+        });
+        searchView.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              Toast.makeText(myView.getContext(),"Clicked",Toast.LENGTH_SHORT).show();
+
+                                          }
+                                      }
+        );
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                // checkedId is the RadioButton selected
-//
-//                switch(checkedId) {
-//                    case R.id.radioButton7:
-//                        // switch to fragment 1
-//                        break;
-//                    case R.id.radioButton6:
-//                        // Fragment 2
-//                        break;
-//                }
-                //boolean checked = ((RadioButton) myView).isChecked();
 
                 switch(checkedId) {
                     case R.id.rb_by_name:
@@ -122,7 +157,9 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
         // Inflate the layout for this fragment
         return myView;
     }
+
 }

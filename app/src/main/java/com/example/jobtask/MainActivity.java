@@ -21,8 +21,13 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jobtask.model.DrinkResponce;
+import com.example.jobtask.network.ApiClient;
+import com.example.jobtask.network.ApiService;
 import com.example.jobtask.utilities.NotificationBroadcastReciever;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,12 +35,19 @@ public class MainActivity extends AppCompatActivity {
     AlarmManager alarmManager;
     PendingIntent pendingIntent;
 
-    private Toolbar toolbar;
     TextView toolbarText;
+    public static ApiService apiInterface;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        apiInterface = ApiClient.getApiClient().create(ApiService.class);
+
+
+
 
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
@@ -71,25 +83,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    public void onRadioButtonClicked(View view) {
-//        // Is the button now checked?
-//        boolean checked = ((RadioButton) view).isChecked();
-//
-//        // Check which radio button was clicked
-//        switch(view.getId()) {
-//            case R.id.rb_by_name:
-//                if (checked)
-//                    // Pirates are the best
-//                    Toast.makeText(MainActivity.this,"Name",Toast.LENGTH_SHORT).show();
-//                    break;
-//            case R.id.rb_by_alphabet:
-//                if (checked)
-//                    // Ninjas rule
-//                    Toast.makeText(MainActivity.this,"Alphabet",Toast.LENGTH_SHORT).show();
-//
-//                break;
-//        }
-//    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
