@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -18,9 +19,13 @@ import android.widget.RadioGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.jobtask.adapters.DrinkListAdapter;
 import com.example.jobtask.model.DrinkResponce;
 import com.example.jobtask.network.ApiClient;
 import com.example.jobtask.network.ApiService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +43,7 @@ public class HomeFragment extends Fragment {
 
     View myView;
     public static ApiService apiInterface;
+    public static String searchType;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -88,29 +94,46 @@ public class HomeFragment extends Fragment {
         RadioGroup radioGroup = (RadioGroup) myView.findViewById(R.id.radioGroup);
         SearchView searchView = (SearchView) myView.findViewById(R.id.searchView);
         RecyclerView recyclerView = (RecyclerView) myView.findViewById(R.id.recycler_view);
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(myView.getContext(),"query" +query,Toast.LENGTH_SHORT).show();
+                Call<DrinkResponce> call=apiInterface.getByName(query);
+                if(searchType == "name")
+                {
+                    call =apiInterface.getByName(query);
+                }
 
-                Call<DrinkResponce> call =apiInterface.getByName(query);
+                if(searchType == "alpha")
+                {
+                    call =apiInterface.getByAlphabet(query);
+                }
 
                 call.enqueue(new Callback<DrinkResponce>() {
                     @Override
                     public void onResponse(Call<DrinkResponce> call, Response<DrinkResponce> response) {
                         if(response.isSuccessful()){
                         // add your code to get data
-                            String detailsJson = response.body().getAllDrinks().toString();
+                            JsonArray detailsJson = response.body().getAllDrinks().getAsJsonArray();
                             List<DrinkResponce> allDrinks = new ArrayList<>();
-                         //   DrinkResponce singleDrink = new DrinkResponce();
 
+                            for(int i = 0;i<detailsJson.size();i++)
+                            {
+                                JsonElement drinkElement = detailsJson.get(i);
+                                JsonObject drinkObject = drinkElement.getAsJsonObject();
+                                DrinkResponce singleDrink = new DrinkResponce(drinkObject.get("strDrink").getAsString(),drinkObject.get("strInstructions").getAsString(),drinkObject.get("strAlcoholic").getAsString(),drinkObject.get("strDrinkThumb").getAsString());
+                                allDrinks.add(singleDrink);
+                            }
+
+                            DrinkListAdapter drinkListAdapter = new DrinkListAdapter(allDrinks);
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(myView.getContext()));
+                            recyclerView.setAdapter(drinkListAdapter);
                         }
                         else if(!response.isSuccessful()){
                             //display error message
                             Toast.makeText(myView.getContext(),""+response.code(),Toast.LENGTH_SHORT).show();
                             Log.i("tag",response.toString());
-
                         }
                     }
 
@@ -127,11 +150,16 @@ public class HomeFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                Toast.makeText(myView.getContext(),"query new text",Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(myView.getContext(),"query new text",Toast.LENGTH_SHORT).show();
 
+                if(searchType=="alpha")
+                {
+                    Toast.makeText(myView.getContext(),"Enter single alphabet",Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
         });
+
         searchView.setOnClickListener(new View.OnClickListener() {
                                           @Override
                                           public void onClick(View v) {
@@ -140,20 +168,21 @@ public class HomeFragment extends Fragment {
                                           }
                                       }
         );
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 switch(checkedId) {
                     case R.id.rb_by_name:
-                            // Pirates are the best
+                            searchType="name";
                             Log.e("tag","name");
                             Toast.makeText(myView.getContext(),"Name",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.rb_by_alphabet:
-                            // Ninjas rule
-                            Log.e("tag","Alpha");
-                            Toast.makeText(myView.getContext(),"Alphabet",Toast.LENGTH_SHORT).show();
+                        searchType="alpha";
+                        Log.e("tag","Alpha");
+                        Toast.makeText(myView.getContext(),"Alphabet",Toast.LENGTH_SHORT).show();
 
                         break;
                 }
