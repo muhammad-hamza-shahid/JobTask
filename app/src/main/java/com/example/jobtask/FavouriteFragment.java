@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
 import com.example.jobtask.adapters.DrinkListAdapter;
+import com.example.jobtask.adapters.FavouriteDrinkListAdapter;
 import com.example.jobtask.model.DrinkResponce;
 import com.example.jobtask.utilities.DataBaseHandler;
 
@@ -78,10 +79,10 @@ public class FavouriteFragment extends Fragment {
         favouriteDrinks=dataBaseHandler.getFavorite();
 
         RecyclerView favDrinksRecyclerView = myView.findViewById(R.id.recycler_view_favourite);
-        DrinkListAdapter drinkListAdapter = new DrinkListAdapter(favouriteDrinks);
+        FavouriteDrinkListAdapter favouriteDrinkListAdapter = new FavouriteDrinkListAdapter(favouriteDrinks);
         favDrinksRecyclerView.setHasFixedSize(true);
         favDrinksRecyclerView.setLayoutManager(new LinearLayoutManager(myView.getContext()));
-        favDrinksRecyclerView.setAdapter(drinkListAdapter);
+        favDrinksRecyclerView.setAdapter(favouriteDrinkListAdapter);
         // Inflate the layout for this fragment
         return myView;
     }
