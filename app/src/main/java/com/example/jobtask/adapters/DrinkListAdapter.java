@@ -64,7 +64,18 @@ public class DrinkListAdapter extends RecyclerView.Adapter<DrinksViewHolder> {
         final DrinkResponce singleDrink = drinkList.get(position);
 
         holder.getDrinkName().setText(singleDrink.getDrinkName());
-        holder.getAlcoholStatus().isChecked();
+       // holder.getAlcoholStatus().setChecked(true);
+
+        if(singleDrink.getAlcoholStatus().equals("Alcoholic"))
+        {
+            holder.getAlcoholStatus().setChecked(true);
+        }
+
+        if(singleDrink.getAlcoholStatus().equals("Non alcoholic"))
+        {
+            holder.getAlcoholStatus().setChecked(false);
+        }
+
         holder.getDrinkRecipe().setText(singleDrink.getDrinkRecipe());
         ImageView drinkImage = holder.getDrinkImage();
         String imageURL = singleDrink.getDrinkImage();

@@ -1,6 +1,7 @@
 package com.example.jobtask;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -44,6 +45,9 @@ public class HomeFragment extends Fragment {
     View myView;
     public static ApiService apiInterface;
     public static String searchType;
+    SharedPreferences preferences;
+    SharedPreferences.Editor preferencesEditor;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -90,6 +94,26 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.fragment_home, container, false);
+        preferences= myView.getContext().getSharedPreferences("radioPref",Context.MODE_PRIVATE);
+
+        try{
+            searchType = preferences.getString("searchType","name");
+        }catch (Exception e)
+        {
+
+        }
+
+
+        RadioButton rbName = myView.findViewById(R.id.rb_by_name);
+        RadioButton rbAlpha = myView.findViewById(R.id.rb_by_alphabet);
+        if(searchType.equals("name"))
+        {
+            rbName.setChecked(true);
+        }else if(searchType.equals("alpha"))
+        {
+            rbAlpha.setChecked(true);
+        }
+
 
         RadioGroup radioGroup = (RadioGroup) myView.findViewById(R.id.radioGroup);
         SearchView searchView = (SearchView) myView.findViewById(R.id.searchView);
@@ -98,13 +122,21 @@ public class HomeFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(myView.getContext(),"query" +query,Toast.LENGTH_SHORT).show();
+
+//                preferencesEditor=preferences.edit();
+//                preferencesEditor.putString("searchType",searchType);
+//                preferencesEditor.apply();
+//                preferencesEditor.commit();
+
+
+
                 Call<DrinkResponce> call=apiInterface.getByName(query);
-                if(searchType == "name")
+                if(searchType.equals("name"))
                 {
                     call =apiInterface.getByName(query);
                 }
 
-                if(searchType == "alpha")
+                if(searchType.equals("alpha"))
                 {
                     call =apiInterface.getByAlphabet(query);
                 }
@@ -176,11 +208,19 @@ public class HomeFragment extends Fragment {
                 switch(checkedId) {
                     case R.id.rb_by_name:
                             searchType="name";
+                            preferencesEditor=preferences.edit();
+                            preferencesEditor.putString("searchType",searchType);
+                            preferencesEditor.apply();
+                           preferencesEditor.commit();
                             Log.e("tag","name");
                             Toast.makeText(myView.getContext(),"Name",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.rb_by_alphabet:
                         searchType="alpha";
+                        preferencesEditor=preferences.edit();
+                        preferencesEditor.putString("searchType",searchType);
+                        preferencesEditor.apply();
+                        preferencesEditor.commit();
                         Log.e("tag","Alpha");
                         Toast.makeText(myView.getContext(),"Alphabet",Toast.LENGTH_SHORT).show();
 
