@@ -31,18 +31,21 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/img_star"
         app:layout_constraintStart_toEndOf="@+id/view2"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <TextView
             android:id="@+id/txt_drink_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLines="1"
             android:text="Margarita Glass"
             android:textColor="@color/black"
             android:textSize="24dp"
@@ -50,9 +53,10 @@
 
         <TextView
             android:id="@+id/txt_drink_recipe"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Margarita Glass"
+            android:maxLines="1"
+            android:text="Stir well"
             android:textColor="@color/black" />
 
     </LinearLayout>

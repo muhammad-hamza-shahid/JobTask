@@ -3,12 +3,14 @@ package com.example.jobtask.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jobtask.R;
 import com.example.jobtask.model.DrinkResponce;
+import com.example.jobtask.utilities.DataBaseHandler;
 import com.example.jobtask.viewholders.DrinksViewHolder;
 
 import java.util.ArrayList;
@@ -44,6 +46,14 @@ public class DrinkListAdapter extends RecyclerView.Adapter<DrinksViewHolder> {
         holder.getDrinkName().setText(singleDrink.getDrinkName());
         holder.getAlcoholStatus().isChecked();
         holder.getDrinkRecipe().setText(singleDrink.getDrinkRecipe());
+        holder.getFavoriteStar().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(holder.itemView.getContext(),"favourite Clicked",Toast.LENGTH_SHORT).show();
+                DataBaseHandler dataBaseHandler = new DataBaseHandler(v.getContext());
+                dataBaseHandler.insertFavorite(singleDrink);
+            }
+        });
     }
 
     @Override

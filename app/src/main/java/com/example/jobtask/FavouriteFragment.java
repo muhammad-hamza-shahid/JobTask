@@ -3,11 +3,20 @@ package com.example.jobtask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+
+import com.example.jobtask.adapters.DrinkListAdapter;
+import com.example.jobtask.model.DrinkResponce;
+import com.example.jobtask.utilities.DataBaseHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +25,8 @@ import android.widget.RadioGroup;
  */
 public class FavouriteFragment extends Fragment {
 
+
+    View myView;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,7 +71,18 @@ public class FavouriteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        myView = inflater.inflate(R.layout.fragment_favourite,container,false);
+        List<DrinkResponce> favouriteDrinks = new ArrayList<>();
+        DataBaseHandler dataBaseHandler = new DataBaseHandler(myView.getContext());
+        favouriteDrinks=dataBaseHandler.getFavorite();
+
+        RecyclerView favDrinksRecyclerView = myView.findViewById(R.id.recycler_view_favourite);
+        DrinkListAdapter drinkListAdapter = new DrinkListAdapter(favouriteDrinks);
+        favDrinksRecyclerView.setHasFixedSize(true);
+        favDrinksRecyclerView.setLayoutManager(new LinearLayoutManager(myView.getContext()));
+        favDrinksRecyclerView.setAdapter(drinkListAdapter);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favourite, container, false);
+        return myView;
     }
 }
