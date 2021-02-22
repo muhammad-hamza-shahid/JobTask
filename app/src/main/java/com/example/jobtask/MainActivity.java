@@ -1,20 +1,27 @@
 package com.example.jobtask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.ActionBar;
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
@@ -35,26 +42,60 @@ public class MainActivity extends AppCompatActivity {
     AlarmManager alarmManager;
     PendingIntent pendingIntent;
 
+
+    private NotificationManager mNotificationManager;
+    private static final int NOTIFICATION_ID = 0;
+    private static final String PRIMARY_CHANNEL_ID ="primary_notification_channel";
+
     TextView toolbarText;
-    public static ApiService apiInterface;
 
-
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        apiInterface = ApiClient.getApiClient().create(ApiService.class);
+        mNotificationManager = (NotificationManager)
+                getSystemService(NOTIFICATION_SERVICE);
+
+        createNotificationChannel();
+
+        Intent notifyIntent = new Intent(this, NotificationBroadcastReciever.class);
+        PendingIntent notifyPendingIntent = PendingIntent.getBroadcast
+                (this, NOTIFICATION_ID, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long repeatInterval = 15 * 1000;
+        long triggerTime = SystemClock.elapsedRealtime()
+                + repeatInterval;
+
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 13);
+        calendar.set(Calendar.MINUTE,17);
+
+
+        if (alarmManager != null) {
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(), repeatInterval, notifyPendingIntent);
+        }       // deliverNotification(MainActivity.this);
 
 
 
 
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        Intent alarmIntent = new Intent(this, NotificationBroadcastReciever.class);
-        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
 
-        startAlarm();
+
+
+
+
+
+        //alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+       // Intent alarmIntent = new Intent(this, NotificationBroadcastReciever.class);
+      //  pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+
+        //startAlarm();
 
         toolbarText=findViewById(R.id.toolbar_text);
 
@@ -71,6 +112,35 @@ public class MainActivity extends AppCompatActivity {
 //                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
 //                PackageManager.DONT_KILL_APP);
     }
+
+    public void createNotificationChannel() {
+
+        // Create a notification manager object.
+        mNotificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        // Notification channels are only available in OREO and higher.
+        // So, add a check on SDK version.
+        if (android.os.Build.VERSION.SDK_INT >=
+                android.os.Build.VERSION_CODES.O) {
+
+            // Create the NotificationChannel with all the parameters.
+            NotificationChannel notificationChannel = new NotificationChannel
+                    (PRIMARY_CHANNEL_ID,
+                            "Stand up notification",
+                            NotificationManager.IMPORTANCE_HIGH);
+
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setDescription
+                    ("Notifies every 15 minutes to stand up and walk");
+            mNotificationManager.createNotificationChannel(notificationChannel);
+        }
+    }
+
+
+
 
     private void startAlarm() {
 
