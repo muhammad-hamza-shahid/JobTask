@@ -13,10 +13,6 @@ import androidx.annotation.RequiresApi;
 
 public class Service extends IntentService {
 
-//    public Service() {
-//        super("Service");
-  //  }
-
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -33,10 +29,9 @@ public class Service extends IntentService {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 11);
-        calendar.set(Calendar.MINUTE, 35);
+        calendar.set(Calendar.HOUR_OF_DAY, 14);
         Intent alarmIntent = new Intent(this, NotificationBroadcastReciever.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),1000 * 20, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 }

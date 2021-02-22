@@ -103,7 +103,6 @@ public class HomeFragment extends Fragment {
 
         }
 
-
         RadioButton rbName = myView.findViewById(R.id.rb_by_name);
         RadioButton rbAlpha = myView.findViewById(R.id.rb_by_alphabet);
         if(searchType.equals("name"))
@@ -114,21 +113,12 @@ public class HomeFragment extends Fragment {
             rbAlpha.setChecked(true);
         }
 
-
         RadioGroup radioGroup = (RadioGroup) myView.findViewById(R.id.radioGroup);
         SearchView searchView = (SearchView) myView.findViewById(R.id.searchView);
         RecyclerView recyclerView = (RecyclerView) myView.findViewById(R.id.recycler_view);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-              //  Toast.makeText(myView.getContext(),"query" +query,Toast.LENGTH_SHORT).show();
-
-//                preferencesEditor=preferences.edit();
-//                preferencesEditor.putString("searchType",searchType);
-//                preferencesEditor.apply();
-//                preferencesEditor.commit();
-
-
 
                 Call<DrinkResponce> call=apiInterface.getByName(query);
                 if(searchType.equals("name"))
@@ -173,7 +163,6 @@ public class HomeFragment extends Fragment {
 
                         @Override
                         public void onFailure(Call<DrinkResponce> call, Throwable t) {
-                            Toast.makeText(myView.getContext(), "" + t.getMessage(), Toast.LENGTH_SHORT).show();
                             Log.i("tag", t.getMessage());
                         }
                     });
@@ -184,12 +173,7 @@ public class HomeFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-            //    Toast.makeText(myView.getContext(),"query new text",Toast.LENGTH_SHORT).show();
 
-//                if(searchType=="alpha")
-//                {
-//              //      Toast.makeText(myView.getContext(),"Enter single alphabet",Toast.LENGTH_SHORT).show();
-//                }
                 return false;
             }
         });
@@ -197,7 +181,6 @@ public class HomeFragment extends Fragment {
         searchView.setOnClickListener(new View.OnClickListener() {
                                           @Override
                                           public void onClick(View v) {
-                                              Toast.makeText(myView.getContext(),"Clicked",Toast.LENGTH_SHORT).show();
 
                                           }
                                       }
@@ -215,7 +198,6 @@ public class HomeFragment extends Fragment {
                             preferencesEditor.apply();
                            preferencesEditor.commit();
                             Log.e("tag","name");
-                            Toast.makeText(myView.getContext(),"Name",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.rb_by_alphabet:
                         searchType="alpha";
@@ -224,14 +206,11 @@ public class HomeFragment extends Fragment {
                         preferencesEditor.apply();
                         preferencesEditor.commit();
                         Log.e("tag","Alpha");
-                        Toast.makeText(myView.getContext(),"Alphabet",Toast.LENGTH_SHORT).show();
-
                         break;
                 }
             }
         });
 
-        // Inflate the layout for this fragment
         return myView;
     }
 

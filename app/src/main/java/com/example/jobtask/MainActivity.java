@@ -39,10 +39,6 @@ import retrofit2.Call;
 public class MainActivity extends AppCompatActivity {
 
 
-    AlarmManager alarmManager;
-    PendingIntent pendingIntent;
-
-
     private NotificationManager mNotificationManager;
     private static final int NOTIFICATION_ID = 0;
     private static final String PRIMARY_CHANNEL_ID ="primary_notification_channel";
@@ -72,30 +68,12 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 13);
-        calendar.set(Calendar.MINUTE,17);
+        calendar.set(Calendar.HOUR_OF_DAY, 14);
 
 
         if (alarmManager != null) {
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(), repeatInterval, notifyPendingIntent);
-        }       // deliverNotification(MainActivity.this);
-
-
-
-
-
-
-
-
-
-
-
-        //alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-       // Intent alarmIntent = new Intent(this, NotificationBroadcastReciever.class);
-      //  pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
-
-        //startAlarm();
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, notifyPendingIntent);
+        }
 
         toolbarText=findViewById(R.id.toolbar_text);
 
@@ -104,13 +82,6 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
-//        ComponentName receiver = new ComponentName(MainActivity.this, NotificationBroadcastReciever.class);
-//        PackageManager pm = MainActivity.this.getPackageManager();
-//
-//        pm.setComponentEnabledSetting(receiver,
-//                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-//                PackageManager.DONT_KILL_APP);
     }
 
     public void createNotificationChannel() {
@@ -134,25 +105,10 @@ public class MainActivity extends AppCompatActivity {
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);
             notificationChannel.setDescription
-                    ("Notifies every 15 minutes to stand up and walk");
+                    ("Notifies everyday take drink at 2 pm");
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
     }
-
-
-
-
-    private void startAlarm() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, 0, pendingIntent);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, 0, pendingIntent);
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, 0, pendingIntent);
-        }
-    }
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
