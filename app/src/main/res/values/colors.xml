@@ -10,5 +10,6 @@
 
     <color name="background_color">#317D87</color>
     <color name="grey">#535353</color>
+    <color name="yellow">#FFFFC107</color>
 
 </resources>

@@ -64,7 +64,7 @@ public class DrinkListAdapter extends RecyclerView.Adapter<DrinksViewHolder> {
         final DrinkResponce singleDrink = drinkList.get(position);
 
         holder.getDrinkName().setText(singleDrink.getDrinkName());
-       // holder.getAlcoholStatus().setChecked(true);
+        holder.getFavoriteStar().setBackgroundResource(R.drawable.grey_star);
 
         if(singleDrink.getAlcoholStatus().equals("Alcoholic"))
         {
@@ -85,9 +85,10 @@ public class DrinkListAdapter extends RecyclerView.Adapter<DrinksViewHolder> {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-                Toast.makeText(holder.itemView.getContext(),"favourite Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(holder.itemView.getContext(),"Added to Favourites",Toast.LENGTH_SHORT).show();
                 DataBaseHandler dataBaseHandler = new DataBaseHandler(v.getContext());
                 dataBaseHandler.insertFavorite(singleDrink);
+                holder.getFavoriteStar().setBackgroundResource(R.drawable.ic_round_star_24);
 
                 File file = new File(v.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),""+singleDrink.getDrinkName()+".jpeg");
 

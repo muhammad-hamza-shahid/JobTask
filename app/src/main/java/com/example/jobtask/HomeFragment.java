@@ -121,7 +121,7 @@ public class HomeFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(myView.getContext(),"query" +query,Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(myView.getContext(),"query" +query,Toast.LENGTH_SHORT).show();
 
 //                preferencesEditor=preferences.edit();
 //                preferencesEditor.putString("searchType",searchType);
@@ -141,41 +141,43 @@ public class HomeFragment extends Fragment {
                     call =apiInterface.getByAlphabet(query);
                 }
 
-                call.enqueue(new Callback<DrinkResponce>() {
-                    @Override
-                    public void onResponse(Call<DrinkResponce> call, Response<DrinkResponce> response) {
-                        if(response.isSuccessful()){
-                        // add your code to get data
-                            JsonArray detailsJson = response.body().getAllDrinks().getAsJsonArray();
-                            List<DrinkResponce> allDrinks = new ArrayList<>();
+                if(searchType.equals("alpha")&&query.length()>1)
+                {
+                    Toast.makeText(myView.getContext(),"Please enter single character", Toast.LENGTH_LONG).show();
+                }else {
+                    call.enqueue(new Callback<DrinkResponce>() {
+                        @Override
+                        public void onResponse(Call<DrinkResponce> call, Response<DrinkResponce> response) {
+                            if (response.isSuccessful()) {
+                                // add your code to get data
+                                JsonArray detailsJson = response.body().getAllDrinks().getAsJsonArray();
+                                List<DrinkResponce> allDrinks = new ArrayList<>();
 
-                            for(int i = 0;i<detailsJson.size();i++)
-                            {
-                                JsonElement drinkElement = detailsJson.get(i);
-                                JsonObject drinkObject = drinkElement.getAsJsonObject();
-                                DrinkResponce singleDrink = new DrinkResponce(drinkObject.get("strDrink").getAsString(),drinkObject.get("strInstructions").getAsString(),drinkObject.get("strAlcoholic").getAsString(),drinkObject.get("strDrinkThumb").getAsString());
-                                allDrinks.add(singleDrink);
+                                for (int i = 0; i < detailsJson.size(); i++) {
+                                    JsonElement drinkElement = detailsJson.get(i);
+                                    JsonObject drinkObject = drinkElement.getAsJsonObject();
+                                    DrinkResponce singleDrink = new DrinkResponce(drinkObject.get("strDrink").getAsString(), drinkObject.get("strInstructions").getAsString(), drinkObject.get("strAlcoholic").getAsString(), drinkObject.get("strDrinkThumb").getAsString());
+                                    allDrinks.add(singleDrink);
+                                }
+
+                                DrinkListAdapter drinkListAdapter = new DrinkListAdapter(allDrinks);
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(myView.getContext()));
+                                recyclerView.setAdapter(drinkListAdapter);
+                            } else if (!response.isSuccessful()) {
+                                //display error message
+                                Toast.makeText(myView.getContext(), "" + response.code(), Toast.LENGTH_SHORT).show();
+                                Log.i("tag", response.toString());
                             }
-
-                            DrinkListAdapter drinkListAdapter = new DrinkListAdapter(allDrinks);
-                            recyclerView.setHasFixedSize(true);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(myView.getContext()));
-                            recyclerView.setAdapter(drinkListAdapter);
                         }
-                        else if(!response.isSuccessful()){
-                            //display error message
-                            Toast.makeText(myView.getContext(),""+response.code(),Toast.LENGTH_SHORT).show();
-                            Log.i("tag",response.toString());
+
+                        @Override
+                        public void onFailure(Call<DrinkResponce> call, Throwable t) {
+                            Toast.makeText(myView.getContext(), "" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.i("tag", t.getMessage());
                         }
-                    }
-
-                    @Override
-                    public void onFailure(Call<DrinkResponce> call, Throwable t) {
-                        Toast.makeText(myView.getContext(),""+t.getMessage(),Toast.LENGTH_SHORT).show();
-                        Log.i("tag",t.getMessage());
-                    }
-                });
-
+                    });
+                }
 
                 return false;
 
@@ -184,10 +186,10 @@ public class HomeFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
             //    Toast.makeText(myView.getContext(),"query new text",Toast.LENGTH_SHORT).show();
 
-                if(searchType=="alpha")
-                {
-                    Toast.makeText(myView.getContext(),"Enter single alphabet",Toast.LENGTH_SHORT).show();
-                }
+//                if(searchType=="alpha")
+//                {
+//              //      Toast.makeText(myView.getContext(),"Enter single alphabet",Toast.LENGTH_SHORT).show();
+//                }
                 return false;
             }
         });

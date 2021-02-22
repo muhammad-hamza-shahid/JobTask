@@ -1,5 +1,7 @@
 package com.example.jobtask.adapters;
 
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +50,7 @@ public class FavouriteDrinkListAdapter extends RecyclerView.Adapter<FavouriteDri
         final DrinkResponce singleDrink = drinkList.get(position);
 
         holder.getDrinkName().setText(singleDrink.getDrinkName());
-
+        holder.getFavoriteStar().setBackgroundResource(R.drawable.ic_round_star_24);
         if(singleDrink.getAlcoholStatus().equals("Alcoholic"))
         {
             holder.getAlcoholStatus().setChecked(true);
